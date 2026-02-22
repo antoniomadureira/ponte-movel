@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ponte Móvel · Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:#F4F6F9; --surface:#FFF; --surface2:#F9FAFB; --border:#EAECF0; --border2:#D1D5DB;
+      --txt1:#0F172A; --txt2:#475569; --txt3:#94A3B8; --accent:#2563EB; --accent-l:#EFF6FF;
+      --g:#059669; --gl:#ECFDF5; --gd:rgba(5,150,105,.15);
+      --r:#DC2626; --rl:#FEF2F2; --rd:rgba(220,38,38,.15);
+      --a:#D97706; --al:#FFFBEB; --ad:rgba(217,119,6,.15);
+      --rad:20px; --rads:12px;
+      --sh:0 1px 2px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.06);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--txt1);min-height:100vh;display:flex;flex-direction:column}
+
+    nav{background:rgba(255,255,255,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:100}
+    .nav-brand{display:flex;align-items:center;gap:10px}
+    .brand-pill{background:var(--txt1);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:5px 12px;border-radius:100px;text-transform:uppercase}
+    .brand-name{font-size:14px;font-weight:600}
+    .brand-sep{color:var(--border2);font-size:18px}
+    .brand-sub{font-size:12px;color:var(--txt3)}
+    .nav-right{display:flex;align-items:center;gap:10px}
+    .live-chip{display:flex;align-items:center;gap:6px;background:var(--gl);color:var(--g);font-size:11px;font-weight:700;letter-spacing:.5px;padding:5px 12px;border-radius:100px;border:1px solid rgba(5,150,105,.2)}
+    .live-dot{width:6px;height:6px;border-radius:50%;background:var(--g);animation:pulse 2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+    .clock-chip{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--txt2);background:var(--surface2);border:1px solid var(--border);padding:5px 12px;border-radius:100px}
+    .nav-link{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--txt2);text-decoration:none;padding:6px 16px;border-radius:100px;border:1px solid var(--border);background:var(--surface);transition:all .2s}
+    .nav-link:hover{background:var(--txt1);color:#fff;border-color:var(--txt1)}
+
+    main{flex:1;padding:36px 32px;max-width:1280px;margin:0 auto;width:100%}
+    .hero-row{display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start;margin-bottom:24px}
+
+    .sem-wrap{background:var(--surface);border-radius:var(--rad);border:1px solid var(--border);box-shadow:var(--sh);padding:40px 32px 32px;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden}
+    .sem-wrap::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .7s}
+    .sem-wrap.s-open::after{background:radial-gradient(ellipse 80% 50% at 50% -10%,var(--gd),transparent);opacity:1}
+    .sem-wrap.s-closed::after{background:radial-gradient(ellipse 80% 50% at 50% -10%,var(--rd),transparent);opacity:1}
+    .sem-wrap.s-opening::after{background:radial-gradient(ellipse 80% 50% at 50% -10%,var(--ad),transparent);opacity:1}
+    .sem-tag{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:28px;position:relative;z-index:1}
+
+    .tl{background:#0F1123;border-radius:24px;padding:22px 26px;display:flex;flex-direction:column;gap:18px;box-shadow:0 8px 32px rgba(0,0,0,.4),0 2px 8px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06);margin-bottom:32px;position:relative;z-index:1}
+    .tl::after{content:'';position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);width:10px;height:16px;background:#0F1123;border-radius:0 0 6px 6px}
+    .bulb{width:72px;height:72px;border-radius:50%;position:relative;transition:all .6s cubic-bezier(.4,0,.2,1)}
+    .bulb::after{content:'';position:absolute;top:10px;left:13px;width:20px;height:12px;background:rgba(255,255,255,.12);border-radius:50%;transform:rotate(-30deg)}
+    .b-r{background:#1E0909;box-shadow:inset 0 3px 6px rgba(0,0,0,.6)}
+    .b-a{background:#1C1400;box-shadow:inset 0 3px 6px rgba(0,0,0,.6)}
+    .b-g{background:#021409;box-shadow:inset 0 3px 6px rgba(0,0,0,.6)}
+    .b-r.on{background:#EF4444;box-shadow:0 0 0 4px rgba(239,68,68,.15),0 0 32px rgba(239,68,68,.7),0 0 64px rgba(239,68,68,.3),inset 0 2px 4px rgba(0,0,0,.2)}
+    .b-a.on{background:#F59E0B;box-shadow:0 0 0 4px rgba(245,158,11,.15),0 0 32px rgba(245,158,11,.7),0 0 64px rgba(245,158,11,.3),inset 0 2px 4px rgba(0,0,0,.2);animation:blink 1.1s ease-in-out infinite}
+    .b-g.on{background:#10B981;box-shadow:0 0 0 4px rgba(16,185,129,.15),0 0 32px rgba(16,185,129,.7),0 0 64px rgba(16,185,129,.3),inset 0 2px 4px rgba(0,0,0,.2)}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+    .sem-label{font-size:26px;font-weight:700;letter-spacing:-.5px;position:relative;z-index:1;transition:color .4s}
+    .sem-desc{font-size:13px;color:var(--txt3);margin-top:6px;margin-bottom:24px;position:relative;z-index:1;text-align:center;line-height:1.6}
+    .s-open .sem-label{color:var(--g)}
+    .s-closed .sem-label{color:var(--r)}
+    .s-opening .sem-label{color:var(--a)}
+
+    .upd-line{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt3);position:relative;z-index:1}
+    .spinner{width:13px;height:13px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;display:none}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .fb-tag{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--txt3);margin-top:8px;position:relative;z-index:1}
+    .fb-dot{width:6px;height:6px;border-radius:50%;background:#F5820D}
+
+    .btn-refresh{margin-top:20px;display:flex;align-items:center;gap:8px;padding:10px 24px;background:var(--txt1);color:#fff;border:none;border-radius:100px;font-size:13px;font-weight:600;font-family:'Sora',sans-serif;cursor:pointer;transition:all .2s;position:relative;z-index:1}
+    .btn-refresh:hover{background:#1E40AF;transform:translateY(-1px);box-shadow:0 4px 16px rgba(37,99,235,.3)}
+
+    .stats-panel{display:flex;flex-direction:column;gap:20px}
+    .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .stat-card{background:var(--surface);border-radius:var(--rads);border:1px solid var(--border);box-shadow:var(--sh);padding:22px 20px;position:relative;overflow:hidden}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--rads) var(--rads) 0 0}
+    .stat-card.total::before{background:linear-gradient(90deg,var(--accent),#7C3AED)}
+    .stat-card.open::before{background:linear-gradient(90deg,var(--g),#34D399)}
+    .stat-card.close::before{background:linear-gradient(90deg,var(--r),#F87171)}
+    .stat-lbl{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--txt3);margin-bottom:10px}
+    .stat-num{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:500;letter-spacing:-2px;line-height:1}
+    .stat-num.blue{color:var(--accent)}
+    .stat-num.green{color:var(--g)}
+    .stat-num.red{color:var(--r)}
+
+    .recent-card{background:var(--surface);border-radius:var(--rad);border:1px solid var(--border);box-shadow:var(--sh);overflow:hidden}
+    .card-head{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+    .card-head-left{display:flex;flex-direction:column;gap:2px}
+    .card-title{font-size:15px;font-weight:600}
+    .card-sub{font-size:12px;color:var(--txt3)}
+    .count-pill{font-size:12px;color:var(--txt2);background:var(--surface2);border:1px solid var(--border);padding:4px 12px;border-radius:100px;font-family:'JetBrains Mono',monospace}
+
+    .tbl-wrap{overflow-x:auto;max-height:320px;overflow-y:auto}
+    table{width:100%;border-collapse:collapse}
+    thead{position:sticky;top:0;background:var(--surface2);z-index:2}
+    th{padding:10px 20px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--txt3);border-bottom:1px solid var(--border)}
+    td{padding:13px 20px;font-size:13px;border-bottom:1px solid var(--border);color:var(--txt2)}
+    tr:last-child td{border-bottom:none}
+    tbody tr{transition:background .15s}
+    tbody tr:hover{background:var(--surface2)}
+    tr.new td{animation:newrow .6s ease}
+    @keyframes newrow{from{background:#EFF6FF}to{background:transparent}}
+
+    .tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600}
+    .tag-dot{width:5px;height:5px;border-radius:50%}
+    .tag.open{background:var(--gl);color:var(--g)}
+    .tag.closed{background:var(--rl);color:var(--r)}
+    .tag.opening{background:var(--al);color:var(--a)}
+    .tag.open .tag-dot{background:var(--g)}
+    .tag.closed .tag-dot{background:var(--r)}
+    .tag.opening .tag-dot{background:var(--a)}
+
+    .mono{font-family:'JetBrains Mono',monospace;font-size:11.5px}
+    .empty-row{padding:48px 24px;text-align:center;color:var(--txt3);font-size:13px;line-height:2}
+
+    .toast{position:fixed;bottom:24px;right:24px;background:#0F172A;color:#fff;padding:13px 18px;border-radius:14px;font-size:13px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,.25);display:flex;align-items:center;gap:10px;transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);z-index:999;max-width:320px}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast-bar{width:3px;min-height:18px;border-radius:2px;align-self:stretch}
+    .toast.ok .toast-bar{background:var(--g)}
+    .toast.err .toast-bar{background:var(--r)}
+
+    .err{background:var(--rl);border:1px solid rgba(220,38,38,.2);border-radius:var(--rads);padding:12px 16px;font-size:13px;color:var(--r);margin-bottom:20px;display:none;align-items:center;gap:8px}
+    .err.on{display:flex}
+
+    footer{border-top:1px solid var(--border);background:var(--surface);padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
+    .foot-l{font-size:12px;color:var(--txt3)}
+    .foot-r{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txt3)}
+    .foot-fb{color:#F5820D;font-weight:600}
+
+    @media(max-width:960px){.hero-row{grid-template-columns:1fr}}
+    @media(max-width:640px){nav{padding:0 16px}main{padding:20px 16px}.stats-grid{grid-template-columns:1fr 1fr}.brand-sub{display:none}footer{flex-direction:column;gap:8px;text-align:center}}
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-brand">
+    <span class="brand-pill">APDL</span>
+    <span class="brand-name">Ponte Móvel</span>
+    <span class="brand-sep">·</span>
+    <span class="brand-sub">Centro de Inteligência Urbana</span>
+  </div>
+  <div class="nav-right">
+    <span class="live-chip"><span class="live-dot"></span>EM DIRETO</span>
+    <span class="clock-chip" id="clk">--:--:--</span>
+    <a href="historico.html" class="nav-link">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Histórico Completo
+    </a>
+  </div>
+</nav>
+
+<main>
+  <div class="err" id="errBanner">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01" stroke-linecap="round"/></svg>
+    Não foi possível contactar o servidor APDL. A tentar proxy alternativo…
+  </div>
+
+  <div class="hero-row">
+    <div class="sem-wrap" id="semCard">
+      <div class="sem-tag">Estado Atual da Ponte</div>
+      <div class="tl">
+        <div class="bulb b-r" id="bR"></div>
+        <div class="bulb b-a" id="bA"></div>
+        <div class="bulb b-g" id="bG"></div>
+      </div>
+      <div class="sem-label" id="sTxt">A carregar…</div>
+      <div class="sem-desc" id="sSub">A estabelecer ligação</div>
+      <div class="upd-line">
+        <div class="spinner" id="spin"></div>
+        <span id="updTxt">—</span>
+      </div>
+      <div class="fb-tag"><span class="fb-dot"></span>Dados guardados no Firebase</div>
+      <button class="btn-refresh" onclick="doFetch()">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Atualizar Agora
+      </button>
+    </div>
+
+    <div class="stats-panel">
+      <div class="stats-grid">
+        <div class="stat-card total"><div class="stat-lbl">Total de Eventos</div><div class="stat-num blue" id="stTotal">—</div></div>
+        <div class="stat-card open"><div class="stat-lbl">Aberturas</div><div class="stat-num green" id="stOpen">—</div></div>
+        <div class="stat-card close"><div class="stat-lbl">Fechamentos</div><div class="stat-num red" id="stClosed">—</div></div>
+      </div>
+      <div class="recent-card">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="card-title">Últimas Alterações</div>
+            <div class="card-sub">Atualizações em tempo real · últimos 10 eventos</div>
+          </div>
+          <span class="count-pill" id="lCount">0</span>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Estado</th><th>Alteração</th><th>Data</th><th>Hora</th></tr></thead>
+            <tbody id="lBody">
+              <tr><td colspan="4" class="empty-row">🔥 A ligar ao Firebase…<br><small>Os registos serão carregados em breve.</small></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span class="foot-l">Ponte Móvel Dashboard · Atualização automática a cada 30 segundos</span>
+  <div class="foot-r">Dados persistidos em <span class="foot-fb">Firebase Firestore</span></div>
+</footer>
+
+<div class="toast" id="toast"><div class="toast-bar"></div><span id="toastMsg"></span></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const FB={apiKey:"AIzaSyBaBYqD5VzMhRQCTa_iMu_O4RR4nhNW7Rs",authDomain:"ponte-movel-b1526.firebaseapp.com",projectId:"ponte-movel-b1526",storageBucket:"ponte-movel-b1526.firebasestorage.app",messagingSenderId:"749121169703",appId:"1:749121169703:web:f8f0859fb8e013e47b6102"};
+const app=initializeApp(FB), db=getFirestore(app), COL="bridge_events";
+const CFG={open:{lbl:"Em Trânsito",desc:"A ponte está aberta ao tráfego",cls:"s-open",badge:"open"},closed:{lbl:"Fechada",desc:"A ponte está encerrada ao tráfego",cls:"s-closed",badge:"closed"},opening:{lbl:"Em Abertura",desc:"A ponte está em manobra de abertura",cls:"s-opening",badge:"opening"}};
+const PROXIES=[u=>`https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,u=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,u=>`https://corsproxy.io/?${encodeURIComponent(u)}`];
+const SRC='https://siga.apdl.pt/AberturaPonteMovel/';
+let curState=null,busy=false,pIdx=0;
+
+setInterval(()=>{document.getElementById('clk').textContent=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit',second:'2-digit'})},1000);
+document.getElementById('clk').textContent=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+function toast(msg,type='ok'){const el=document.getElementById('toast');el.querySelector('.toast-bar').style.background=type==='ok'?'#059669':'#DC2626';document.getElementById('toastMsg').textContent=msg;el.className=`toast ${type} show`;setTimeout(()=>el.classList.remove('show'),3500)}
+
+function detect(h){
+  if(/semvermelho|semifechado|fechado\.png/i.test(h))return'closed';
+  if(/semiabre|semamarelo|semamber/i.test(h))return'opening';
+  if(/semicon|em.tr.nsito|em.transito/i.test(h))return'open';
+  if(/fechad|encerrad|cortad|interdita/i.test(h))return'closed';
+  if(/abertura|abrindo|em.manobra/i.test(h))return'opening';
+  if(/trânsito|transito|aberta|aberto/i.test(h))return'open';
+  return null;
+}
+
+onSnapshot(query(collection(db,COL),orderBy('timestamp','desc'),limit(10)),snap=>{
+  const rows=snap.docs.map(d=>({id:d.id,...d.data()}));
+  const tb=document.getElementById('lBody');
+  if(!rows.length){tb.innerHTML='<tr><td colspan="4" class="empty-row">Sem registos ainda.</td></tr>';return}
+  tb.innerHTML=rows.map((e,i)=>`<tr class="${i===0?'new':''}"><td><span class="tag ${e.badge}"><span class="tag-dot"></span>${e.label}</span></td><td>${e.changeType}</td><td class="mono">${e.date}</td><td class="mono">${e.time}</td></tr>`).join('');
+},_=>toast('Erro na ligação ao Firebase','err'));
+
+onSnapshot(query(collection(db,COL),orderBy('timestamp','desc')),snap=>{
+  const all=snap.docs.map(d=>d.data());
+  document.getElementById('stTotal').textContent=all.length;
+  document.getElementById('stOpen').textContent=all.filter(e=>e.state==='open').length;
+  document.getElementById('stClosed').textContent=all.filter(e=>e.state==='closed').length;
+  document.getElementById('lCount').textContent=all.length;
+});
+
+function renderSem(s){const c=CFG[s];document.getElementById('semCard').className='sem-wrap '+c.cls;document.getElementById('bR').className='bulb b-r'+(s==='closed'?' on':'');document.getElementById('bA').className='bulb b-a'+(s==='opening'?' on':'');document.getElementById('bG').className='bulb b-g'+(s==='open'?' on':'');document.getElementById('sTxt').textContent=c.lbl;document.getElementById('sSub').textContent=c.desc}
+
+async function saveEvent(nS,pS,t){const prev=pS?CFG[pS].lbl:null,curr=CFG[nS].lbl;try{await addDoc(collection(db,COL),{state:nS,badge:CFG[nS].badge,label:curr,changeType:prev?`${prev} → ${curr}`:`${curr} (arranque)`,date:t.toLocaleDateString('pt-PT'),time:t.toLocaleTimeString('pt-PT'),timestamp:t.getTime()});toast('✓ Registo guardado no Firebase')}catch{toast('Erro ao guardar registo','err')}}
+
+window.doFetch=async function(){
+  if(busy)return;busy=true;
+  document.getElementById('spin').style.display='block';
+  document.getElementById('errBanner').classList.remove('on');
+  let html=null;
+  for(let i=0;i<PROXIES.length;i++){const idx=(pIdx+i)%PROXIES.length;try{const r=await fetch(PROXIES[idx](SRC),{cache:'no-store'});if(!r.ok)continue;const ct=r.headers.get('content-type')||'';const body=ct.includes('json')?(await r.json()).contents:await r.text();if(body?.length>50){html=body;pIdx=idx;break}}catch{}}
+  const now=new Date();
+  if(html){const s=detect(html);if(s){renderSem(s);if(s!==curState){await saveEvent(s,curState,now);curState=s}}else document.getElementById('errBanner').classList.add('on')}
+  else document.getElementById('errBanner').classList.add('on');
+  document.getElementById('updTxt').textContent='Última atualização: '+now.toLocaleTimeString('pt-PT');
+  document.getElementById('spin').style.display='none';busy=false;
+};
+
+doFetch();setInterval(doFetch,30000);
+</script>
+</body>
+</html>

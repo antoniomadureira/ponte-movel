@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ponte Móvel · Histórico</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#F4F6F9;--surface:#FFF;--surface2:#F9FAFB;--border:#EAECF0;--border2:#D1D5DB;
+      --txt1:#0F172A;--txt2:#475569;--txt3:#94A3B8;--accent:#2563EB;
+      --g:#059669;--gl:#ECFDF5;--r:#DC2626;--rl:#FEF2F2;--a:#D97706;--al:#FFFBEB;
+      --rad:20px;--rads:12px;--sh:0 1px 2px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.06);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--txt1);min-height:100vh;display:flex;flex-direction:column}
+
+    nav{background:rgba(255,255,255,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:100}
+    .nav-brand{display:flex;align-items:center;gap:10px}
+    .brand-pill{background:var(--txt1);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:5px 12px;border-radius:100px;text-transform:uppercase}
+    .brand-name{font-size:14px;font-weight:600}
+    .brand-sep{color:var(--border2);font-size:18px}
+    .brand-sub{font-size:12px;color:var(--txt3)}
+    .nav-right{display:flex;align-items:center;gap:10px}
+    .nav-link{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--txt2);text-decoration:none;padding:6px 16px;border-radius:100px;border:1px solid var(--border);background:var(--surface);transition:all .2s}
+    .nav-link:hover{background:var(--txt1);color:#fff;border-color:var(--txt1)}
+
+    main{flex:1;padding:36px 32px;max-width:1280px;margin:0 auto;width:100%}
+
+    /* PAGE HEADER */
+    .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:16px}
+    .page-title{font-size:28px;font-weight:700;letter-spacing:-.5px;line-height:1.2}
+    .page-sub{font-size:14px;color:var(--txt3);margin-top:4px;font-weight:400}
+    .header-actions{display:flex;align-items:center;gap:10px}
+
+    .btn{display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:600;font-family:'Sora',sans-serif;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none}
+    .btn-primary{background:var(--txt1);color:#fff;border-color:var(--txt1)}
+    .btn-primary:hover{background:#1E40AF;border-color:#1E40AF;transform:translateY(-1px);box-shadow:0 4px 16px rgba(37,99,235,.3)}
+    .btn-outline{background:var(--surface);color:var(--txt2);border-color:var(--border)}
+    .btn-outline:hover{background:var(--surface2)}
+    .btn-green{background:var(--g);color:#fff;border-color:var(--g)}
+    .btn-green:hover{background:#047857;transform:translateY(-1px);box-shadow:0 4px 16px rgba(5,150,105,.3)}
+
+    /* FILTERS */
+    .filters-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+    .filter-group{display:flex;align-items:center;gap:6px}
+    .filter-label{font-size:12px;font-weight:600;color:var(--txt3);letter-spacing:.5px;text-transform:uppercase}
+    .filter-btn{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:600;font-family:'Sora',sans-serif;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--txt2);transition:all .2s}
+    .filter-btn:hover{border-color:var(--border2)}
+    .filter-btn.active-all{background:var(--txt1);color:#fff;border-color:var(--txt1)}
+    .filter-btn.active-open{background:var(--gl);color:var(--g);border-color:rgba(5,150,105,.3)}
+    .filter-btn.active-closed{background:var(--rl);color:var(--r);border-color:rgba(220,38,38,.3)}
+    .filter-btn.active-opening{background:var(--al);color:var(--a);border-color:rgba(217,119,6,.3)}
+    .sep{color:var(--border);font-size:20px}
+
+    .search-wrap{position:relative;flex:1;min-width:200px;max-width:320px}
+    .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--txt3);pointer-events:none}
+    .search-input{width:100%;padding:8px 12px 8px 36px;border:1px solid var(--border);border-radius:100px;font-size:13px;font-family:'Sora',sans-serif;color:var(--txt1);background:var(--surface);outline:none;transition:border-color .2s}
+    .search-input:focus{border-color:var(--accent)}
+    .search-input::placeholder{color:var(--txt3)}
+
+    /* STATS ROW */
+    .stats-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+    .stat-mini{background:var(--surface);border-radius:var(--rads);border:1px solid var(--border);box-shadow:var(--sh);padding:16px 18px;display:flex;align-items:center;gap:14px}
+    .stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .si-blue{background:#EFF6FF}
+    .si-green{background:var(--gl)}
+    .si-red{background:var(--rl)}
+    .si-amber{background:var(--al)}
+    .stat-info{}
+    .stat-mini-lbl{font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--txt3);margin-bottom:2px}
+    .stat-mini-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:500;letter-spacing:-1px}
+    .smv-blue{color:var(--accent)}
+    .smv-green{color:var(--g)}
+    .smv-red{color:var(--r)}
+    .smv-amber{color:var(--a)}
+
+    /* TABLE CARD */
+    .table-card{background:var(--surface);border-radius:var(--rad);border:1px solid var(--border);box-shadow:var(--sh);overflow:hidden}
+    .table-head{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+    .th-left{display:flex;flex-direction:column;gap:2px}
+    .th-title{font-size:15px;font-weight:600}
+    .th-sub{font-size:12px;color:var(--txt3)}
+    .count-pill{font-size:12px;color:var(--txt2);background:var(--surface2);border:1px solid var(--border);padding:4px 12px;border-radius:100px;font-family:'JetBrains Mono',monospace}
+
+    .tbl-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse}
+    thead{position:sticky;top:0;background:var(--surface2);z-index:2}
+    th{padding:11px 20px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--txt3);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;white-space:nowrap}
+    th:hover{color:var(--txt2)}
+    th .sort-icon{margin-left:4px;opacity:.4}
+    th.asc .sort-icon::after{content:'↑'}
+    th.desc .sort-icon::after{content:'↓'}
+    th:not(.asc):not(.desc) .sort-icon::after{content:'↕'}
+    td{padding:13px 20px;font-size:13px;border-bottom:1px solid var(--border);color:var(--txt2)}
+    tr:last-child td{border-bottom:none}
+    tbody tr{transition:background .15s}
+    tbody tr:hover{background:var(--surface2)}
+
+    .tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600}
+    .tag-dot{width:5px;height:5px;border-radius:50%}
+    .tag.open{background:var(--gl);color:var(--g)}
+    .tag.closed{background:var(--rl);color:var(--r)}
+    .tag.opening{background:var(--al);color:var(--a)}
+    .tag.open .tag-dot{background:var(--g)}
+    .tag.closed .tag-dot{background:var(--r)}
+    .tag.opening .tag-dot{background:var(--a)}
+
+    .mono{font-family:'JetBrains Mono',monospace;font-size:11.5px}
+    .num-cell{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--txt3)}
+
+    .empty-state{padding:64px 24px;text-align:center;color:var(--txt3);font-size:14px;line-height:2}
+    .empty-state .empty-icon{font-size:36px;margin-bottom:8px;display:block}
+
+    /* PAGINATION */
+    .pagination{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-top:1px solid var(--border);flex-wrap:wrap;gap:12px}
+    .page-info{font-size:13px;color:var(--txt3)}
+    .page-info strong{color:var(--txt1);font-weight:600}
+    .page-btns{display:flex;align-items:center;gap:6px}
+    .page-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--txt2);font-size:13px;font-family:'Sora',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+    .page-btn:hover:not(:disabled){background:var(--surface2)}
+    .page-btn.active{background:var(--txt1);color:#fff;border-color:var(--txt1)}
+    .page-btn:disabled{opacity:.35;cursor:default}
+
+    /* DOWNLOAD MODAL */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center}
+    .modal-backdrop.open{display:flex}
+    .modal{background:var(--surface);border-radius:var(--rad);padding:32px;max-width:440px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,.2);animation:modalIn .3s cubic-bezier(.34,1.56,.64,1)}
+    @keyframes modalIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+    .modal-title{font-size:18px;font-weight:700;margin-bottom:6px}
+    .modal-sub{font-size:13px;color:var(--txt3);margin-bottom:24px;line-height:1.6}
+    .modal-options{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+    .dl-opt{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:1px solid var(--border);border-radius:var(--rads);cursor:pointer;transition:all .2s}
+    .dl-opt:hover{border-color:var(--accent);background:var(--accent-l)}
+    .dl-opt-left{display:flex;align-items:center;gap:12px}
+    .dl-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+    .dl-info strong{font-size:14px;font-weight:600;display:block;margin-bottom:2px}
+    .dl-info span{font-size:12px;color:var(--txt3)}
+    .dl-arrow{color:var(--txt3)}
+    .modal-cancel{width:100%;padding:10px;border-radius:100px;border:1px solid var(--border);background:var(--surface2);color:var(--txt2);font-size:13px;font-weight:600;font-family:'Sora',sans-serif;cursor:pointer;transition:all .2s}
+    .modal-cancel:hover{background:var(--border)}
+
+    /* LOADING */
+    .loading-overlay{position:fixed;inset:0;background:rgba(244,246,249,.8);backdrop-filter:blur(4px);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+    .loading-overlay.on{display:flex}
+    .loading-spin{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-txt{font-size:14px;color:var(--txt2)}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;background:#0F172A;color:#fff;padding:13px 18px;border-radius:14px;font-size:13px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,.25);display:flex;align-items:center;gap:10px;transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);z-index:999}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast-bar{width:3px;min-height:18px;border-radius:2px;align-self:stretch}
+    .toast.ok .toast-bar{background:var(--g)}
+    .toast.err .toast-bar{background:var(--r)}
+
+    footer{border-top:1px solid var(--border);background:var(--surface);padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
+    .foot-l{font-size:12px;color:var(--txt3)}
+    .foot-r{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txt3)}
+    .foot-fb{color:#F5820D;font-weight:600}
+
+    @media(max-width:900px){.stats-mini{grid-template-columns:1fr 1fr}}
+    @media(max-width:640px){nav{padding:0 16px}main{padding:20px 16px}.brand-sub{display:none}footer{flex-direction:column;gap:8px;text-align:center}.stats-mini{grid-template-columns:1fr 1fr}.page-header{flex-direction:column}.header-actions{width:100%;flex-wrap:wrap}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <span class="brand-pill">APDL</span>
+    <span class="brand-name">Ponte Móvel</span>
+    <span class="brand-sep">·</span>
+    <span class="brand-sub">Centro de Inteligência Urbana</span>
+  </div>
+  <div class="nav-right">
+    <a href="index.html" class="nav-link">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Dashboard
+    </a>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div>
+      <div class="page-title">Histórico Completo</div>
+      <div class="page-sub">Todos os registos de alterações da Ponte Móvel</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-green" onclick="openDownloadModal()">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Exportar Dados
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-mini">
+    <div class="stat-mini">
+      <div class="stat-icon si-blue">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#2563EB" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="stat-info"><div class="stat-mini-lbl">Total</div><div class="stat-mini-val smv-blue" id="s-total">—</div></div>
+    </div>
+    <div class="stat-mini">
+      <div class="stat-icon si-green">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#059669" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="stat-info"><div class="stat-mini-lbl">Aberturas</div><div class="stat-mini-val smv-green" id="s-open">—</div></div>
+    </div>
+    <div class="stat-mini">
+      <div class="stat-icon si-red">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="stat-info"><div class="stat-mini-lbl">Fechamentos</div><div class="stat-mini-val smv-red" id="s-closed">—</div></div>
+    </div>
+    <div class="stat-mini">
+      <div class="stat-icon si-amber">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#D97706" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="stat-info"><div class="stat-mini-lbl">Manobras</div><div class="stat-mini-val smv-amber" id="s-opening">—</div></div>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <div class="filter-group">
+      <span class="filter-label">Filtro</span>
+      <button class="filter-btn active-all" id="f-all"    onclick="setFilter('all')">Todos</button>
+      <button class="filter-btn"            id="f-open"   onclick="setFilter('open')">Aberturas</button>
+      <button class="filter-btn"            id="f-closed" onclick="setFilter('closed')">Fechamentos</button>
+      <button class="filter-btn"            id="f-opening"onclick="setFilter('opening')">Manobras</button>
+    </div>
+    <span class="sep">|</span>
+    <div class="search-wrap">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/></svg>
+      <input type="text" class="search-input" placeholder="Pesquisar…" id="searchInput" oninput="applyFilters()"/>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-head">
+      <div class="th-left">
+        <div class="th-title">Registos de Alterações</div>
+        <div class="th-sub" id="th-sub">A carregar dados do Firebase…</div>
+      </div>
+      <span class="count-pill" id="showing-count">—</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortBy('id')">#<span class="sort-icon"></span></th>
+            <th onclick="sortBy('state')">Estado<span class="sort-icon"></span></th>
+            <th onclick="sortBy('changeType')">Tipo de Alteração<span class="sort-icon"></span></th>
+            <th onclick="sortBy('date')">Data<span class="sort-icon"></span></th>
+            <th onclick="sortBy('time')">Hora<span class="sort-icon"></span></th>
+          </tr>
+        </thead>
+        <tbody id="tBody">
+          <tr><td colspan="5" class="empty-state"><span class="empty-icon">🔥</span>A carregar registos do Firebase…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <div class="page-info" id="pageInfo">—</div>
+      <div class="page-btns" id="pageBtns"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span class="foot-l">Ponte Móvel · Histórico de Alterações</span>
+  <div class="foot-r">Dados persistidos em <span class="foot-fb">Firebase Firestore</span></div>
+</footer>
+
+<!-- DOWNLOAD MODAL -->
+<div class="modal-backdrop" id="dlModal">
+  <div class="modal">
+    <div class="modal-title">Exportar Dados</div>
+    <div class="modal-sub">Escolha o formato para exportar todos os registos históricos da Ponte Móvel.</div>
+    <div class="modal-options">
+      <div class="dl-opt" onclick="downloadCSV()">
+        <div class="dl-opt-left">
+          <div class="dl-icon" style="background:#F0FFF4">📊</div>
+          <div class="dl-info">
+            <strong>CSV</strong>
+            <span>Compatível com Excel, Google Sheets e outros</span>
+          </div>
+        </div>
+        <svg class="dl-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="dl-opt" onclick="downloadJSON()">
+        <div class="dl-opt-left">
+          <div class="dl-icon" style="background:#FFF7ED">🗂️</div>
+          <div class="dl-info">
+            <strong>JSON</strong>
+            <span>Para integração com sistemas e APIs</span>
+          </div>
+        </div>
+        <svg class="dl-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="dl-opt" onclick="downloadTXT()">
+        <div class="dl-opt-left">
+          <div class="dl-icon" style="background:#F8FAFC">📄</div>
+          <div class="dl-info">
+            <strong>TXT</strong>
+            <span>Relatório simples em texto</span>
+          </div>
+        </div>
+        <svg class="dl-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <button class="modal-cancel" onclick="closeDownloadModal()">Cancelar</button>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loading">
+  <div class="loading-spin"></div>
+  <div class="loading-txt">A carregar dados do Firebase…</div>
+</div>
+
+<div class="toast" id="toast"><div class="toast-bar"></div><span id="toastMsg"></span></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, orderBy, onSnapshot }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const FB={apiKey:"AIzaSyBaBYqD5VzMhRQCTa_iMu_O4RR4nhNW7Rs",authDomain:"ponte-movel-b1526.firebaseapp.com",projectId:"ponte-movel-b1526",storageBucket:"ponte-movel-b1526.firebasestorage.app",messagingSenderId:"749121169703",appId:"1:749121169703:web:f8f0859fb8e013e47b6102"};
+const app=initializeApp(FB), db=getFirestore(app), COL="bridge_events";
+
+const PER_PAGE=25;
+let allData=[], filtered=[], curPage=1, curFilter='all', sortCol='timestamp', sortDir='desc', loaded=false;
+
+document.getElementById('loading').classList.add('on');
+
+onSnapshot(query(collection(db,COL),orderBy('timestamp','desc')),snap=>{
+  allData=snap.docs.map((d,i)=>({id:snap.docs.length-i,...d.data()}));
+  if(!loaded){document.getElementById('loading').classList.remove('on');loaded=true}
+  updateStats(); applyFilters();
+  document.getElementById('th-sub').textContent=`${allData.length} registos totais · atualização em tempo real`;
+},err=>{
+  document.getElementById('loading').classList.remove('on');
+  document.getElementById('tBody').innerHTML='<tr><td colspan="5" class="empty-state"><span class="empty-icon">⚠️</span>Erro ao ligar ao Firebase.<br><small>Verifique a sua ligação e tente novamente.</small></td></tr>';
+});
+
+function updateStats(){
+  document.getElementById('s-total').textContent=allData.length;
+  document.getElementById('s-open').textContent=allData.filter(e=>e.state==='open').length;
+  document.getElementById('s-closed').textContent=allData.filter(e=>e.state==='closed').length;
+  document.getElementById('s-opening').textContent=allData.filter(e=>e.state==='opening').length;
+}
+
+window.setFilter=function(f){
+  curFilter=f; curPage=1;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.className='filter-btn');
+  document.getElementById('f-all').classList.add(f==='all'?'active-all':'');
+  document.getElementById('f-open').classList.add(f==='open'?'active-open':'');
+  document.getElementById('f-closed').classList.add(f==='closed'?'active-closed':'');
+  document.getElementById('f-opening').classList.add(f==='opening'?'active-opening':'');
+  if(f==='all') document.getElementById('f-all').className='filter-btn active-all';
+  applyFilters();
+};
+
+window.applyFilters=function(){
+  const q=document.getElementById('searchInput').value.toLowerCase().trim();
+  filtered=allData.filter(e=>{
+    if(curFilter!=='all'&&e.state!==curFilter)return false;
+    if(q&&!`${e.label}${e.changeType}${e.date}${e.time}`.toLowerCase().includes(q))return false;
+    return true;
+  });
+  sortData(); renderTable(); renderPagination();
+};
+
+window.sortBy=function(col){
+  if(sortCol===col){sortDir=sortDir==='asc'?'desc':'asc'}else{sortCol=col;sortDir='desc'}
+  document.querySelectorAll('th').forEach(th=>th.classList.remove('asc','desc'));
+  const cols=['id','state','changeType','date','time'];
+  const idx=cols.indexOf(col);
+  if(idx>=0){const ths=document.querySelectorAll('th');ths[idx].classList.add(sortDir)}
+  sortData(); renderTable();
+};
+
+function sortData(){
+  filtered.sort((a,b)=>{
+    let va=a[sortCol==='id'?'timestamp':sortCol]||'',vb=b[sortCol==='id'?'timestamp':sortCol]||'';
+    if(sortCol==='id'){va=a.timestamp;vb=b.timestamp}
+    const cmp=typeof va==='number'?va-vb:String(va).localeCompare(String(vb),'pt-PT');
+    return sortDir==='asc'?cmp:-cmp;
+  });
+}
+
+function renderTable(){
+  const start=(curPage-1)*PER_PAGE, end=Math.min(start+PER_PAGE,filtered.length);
+  const page=filtered.slice(start,end);
+  const tb=document.getElementById('tBody');
+  document.getElementById('showing-count').textContent=filtered.length;
+  if(!page.length){
+    tb.innerHTML='<tr><td colspan="5" class="empty-state"><span class="empty-icon">🔍</span>Nenhum registo encontrado.<br><small>Tente ajustar os filtros ou o termo de pesquisa.</small></td></tr>';
+    return;
+  }
+  tb.innerHTML=page.map((e,i)=>`
+    <tr>
+      <td class="num-cell">${String(start+i+1).padStart(3,'0')}</td>
+      <td><span class="tag ${e.badge}"><span class="tag-dot"></span>${e.label}</span></td>
+      <td>${e.changeType}</td>
+      <td class="mono">${e.date}</td>
+      <td class="mono">${e.time}</td>
+    </tr>`).join('');
+  const total=filtered.length, from=start+1, to=end;
+  document.getElementById('pageInfo').innerHTML=`A mostrar <strong>${from}–${to}</strong> de <strong>${total}</strong> registos`;
+}
+
+function renderPagination(){
+  const total=Math.ceil(filtered.length/PER_PAGE);
+  const pb=document.getElementById('pageBtns');
+  if(total<=1){pb.innerHTML='';return}
+  let html=`<button class="page-btn" onclick="goPage(${curPage-1})" ${curPage===1?'disabled':''}>‹</button>`;
+  const range=5, start=Math.max(1,curPage-2), end=Math.min(total,start+range-1);
+  for(let i=start;i<=end;i++) html+=`<button class="page-btn ${i===curPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  html+=`<button class="page-btn" onclick="goPage(${curPage+1})" ${curPage===total?'disabled':''}>›</button>`;
+  pb.innerHTML=html;
+}
+
+window.goPage=function(p){curPage=p;renderTable();renderPagination();window.scrollTo({top:0,behavior:'smooth'})};
+
+// DOWNLOAD
+window.openDownloadModal=function(){document.getElementById('dlModal').classList.add('open')};
+window.closeDownloadModal=function(){document.getElementById('dlModal').classList.remove('open')};
+document.getElementById('dlModal').addEventListener('click',e=>{if(e.target===document.getElementById('dlModal'))closeDownloadModal()});
+
+function dlFile(content,name,type){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type}));
+  a.download=name; a.click(); URL.revokeObjectURL(a.href);
+  closeDownloadModal(); toast(`✓ Ficheiro "${name}" exportado com sucesso`);
+}
+
+window.downloadCSV=function(){
+  const bom='\uFEFF';
+  const header='Nº,Estado,Tipo de Alteração,Data,Hora\n';
+  const rows=allData.map((e,i)=>`${i+1},"${e.label}","${e.changeType}","${e.date}","${e.time}"`).join('\n');
+  dlFile(bom+header+rows,`ponte-movel-historico-${stamp()}.csv`,'text/csv;charset=utf-8');
+};
+
+window.downloadJSON=function(){
+  const out=allData.map((e,i)=>({numero:i+1,estado:e.label,alteracao:e.changeType,data:e.date,hora:e.time,timestamp:e.timestamp}));
+  dlFile(JSON.stringify({exportado_em:new Date().toLocaleString('pt-PT'),total:out.length,registos:out},null,2),`ponte-movel-historico-${stamp()}.json`,'application/json');
+};
+
+window.downloadTXT=function(){
+  const lines=[
+    '════════════════════════════════════════════════════',
+    '  PONTE MÓVEL — HISTÓRICO DE ALTERAÇÕES',
+    `  Exportado em: ${new Date().toLocaleString('pt-PT')}`,
+    `  Total de registos: ${allData.length}`,
+    '════════════════════════════════════════════════════\n',
+    ...allData.map((e,i)=>`[${String(i+1).padStart(4,'0')}] ${e.date} ${e.time}  |  ${e.label.padEnd(14)}  |  ${e.changeType}`)
+  ];
+  dlFile(lines.join('\n'),`ponte-movel-historico-${stamp()}.txt`,'text/plain;charset=utf-8');
+};
+
+function stamp(){return new Date().toISOString().slice(0,10)}
+
+function toast(msg,type='ok'){
+  const el=document.getElementById('toast');
+  el.querySelector('.toast-bar').style.background=type==='ok'?'#059669':'#DC2626';
+  document.getElementById('toastMsg').textContent=msg;
+  el.className=`toast ${type} show`;
+  setTimeout(()=>el.classList.remove('show'),3500);
+}
+</script>
+</body>
+</html>
